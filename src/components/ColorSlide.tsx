@@ -594,13 +594,14 @@ export function ColorSlide() {
   // Build product list based on detected colors
   const buildProductList = (colorCategories: string[]) => {
     const productList: ProductItem[] = [];
+    // Responsive positions - spread out to avoid overlap and swatches (now in top-left)
     const positions = [
-      { x: '10%', y: '15%' },
-      { x: '75%', y: '10%' },
-      { x: '15%', y: '65%' },
-      { x: '50%', y: '70%' },
-      { x: '80%', y: '60%' },
-      { x: '45%', y: '20%' },
+      { x: '25%', y: '15%' },
+      { x: '75%', y: '8%' },
+      { x: '5%', y: '55%' },
+      { x: '75%', y: '50%' },
+      { x: '40%', y: '70%' },
+      { x: '50%', y: '20%' },
     ];
     
     let productIndex = 0;
@@ -713,6 +714,14 @@ export function ColorSlide() {
         
         // Build product list based on detected colors
         const productList = buildProductList(detectedColorCategories);
+        console.log('Product list built:', productList);
+        setProducts(productList);
+      } else {
+        // Fallback: use demo colors if detection fails
+        const fallbackColors = ['grey', 'orange'];
+        setDetectedColors(fallbackColors);
+        const productList = buildProductList(fallbackColors);
+        console.log('Using fallback colors, product list:', productList);
         setProducts(productList);
       }
       
@@ -918,12 +927,12 @@ export function ColorSlide() {
       <AnimatePresence>
         {analysisComplete && detectedColors.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="absolute bottom-8 right-8 z-10"
+            className="absolute top-8 left-8 max-[1024px]:top-4 max-[1024px]:left-4 z-10"
           >
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl px-4 py-4 border border-white/20 flex flex-col gap-3">
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl px-4 py-4 max-[1024px]:px-3 max-[1024px]:py-3 border border-white/20 flex flex-col gap-3 max-[1024px]:gap-2">
               {detectedColors.map((colorName, index) => (
                 <motion.div
                   key={colorName}
@@ -943,10 +952,10 @@ export function ColorSlide() {
                       ease: "easeInOut",
                     }
                   }}
-                  className="flex items-center gap-3"
+                  className="flex items-center gap-3 max-[1024px]:gap-2"
                 >
                   <motion.div 
-                    className="w-12 h-16 rounded-lg border-2 border-white/50 shadow-lg flex-shrink-0"
+                    className="w-12 h-16 max-[1024px]:w-10 max-[1024px]:h-12 rounded-lg border-2 border-white/50 shadow-lg flex-shrink-0"
                     style={{ backgroundColor: getColorHex(colorName) }}
                     animate={{
                       rotate: [0, 2, -2, 0],
@@ -959,7 +968,7 @@ export function ColorSlide() {
                       delay: index * 0.2,
                     }}
                   />
-                  <span className="text-white text-sm capitalize" style={{ fontWeight: 300 }}>
+                  <span className="text-white text-sm max-[1024px]:text-xs capitalize" style={{ fontWeight: 300 }}>
                     {colorName}
                   </span>
                 </motion.div>
@@ -971,10 +980,10 @@ export function ColorSlide() {
 
       {/* Products that pop up */}
       <AnimatePresence>
-        {showProducts && products.map((product, index) => (
+        {showProducts && products.length > 0 && products.map((product, index) => (
           <motion.div
             key={`${product.name}-${index}`}
-            className="absolute"
+            className="absolute z-30"
             style={{
               left: product.position.x,
               top: product.position.y,
@@ -1002,15 +1011,15 @@ export function ColorSlide() {
               }}
             >
               {/* Editorial product frame matching Figma design - scaled down */}
-              <div className="bg-white relative w-[190px] h-[285px] overflow-hidden shadow-2xl hover:scale-105 transition-transform duration-300">
+              <div className="bg-white relative w-[190px] h-[285px] max-[1024px]:w-[140px] max-[1024px]:h-[210px] overflow-hidden shadow-2xl hover:scale-105 transition-transform duration-300">
                 {/* Colored background panel */}
                 <div 
-                  className="absolute h-full left-0 top-0 w-[127px]"
+                  className="absolute h-full left-0 top-0 w-[127px] max-[1024px]:w-[94px]"
                   style={{ backgroundColor: product.color }}
                 />
                 
                 {/* Product image */}
-                <div className="absolute h-[157px] left-[34px] top-[77px] w-[104px]">
+                <div className="absolute h-[157px] max-[1024px]:h-[116px] left-[34px] max-[1024px]:left-[25px] top-[77px] max-[1024px]:top-[57px] w-[104px] max-[1024px]:w-[77px]">
                   <ImageWithFallback
                     src={product.image}
                     alt={product.name}
@@ -1020,7 +1029,7 @@ export function ColorSlide() {
                 
                 {/* Large color text overlay */}
                 <p 
-                  className="absolute font-semibold leading-[38px] left-[95px] not-italic text-[40px] text-black text-center top-[65px] translate-x-[-50%] w-[150px] uppercase pointer-events-none"
+                  className="absolute font-semibold leading-[38px] max-[1024px]:leading-[28px] left-[95px] max-[1024px]:left-[70px] not-italic text-[40px] max-[1024px]:text-[28px] text-black text-center top-[55px] max-[1024px]:top-[42px] translate-x-[-50%] w-[150px] max-[1024px]:w-[110px] uppercase pointer-events-none"
                   style={{ 
                     fontFamily: "'Inter', sans-serif",
                     letterSpacing: '-3px',
@@ -1085,8 +1094,8 @@ export function ColorSlide() {
               className="text-center"
             >
               <h1 
-                className="text-white text-[96px] tracking-[-1.92px] uppercase"
-                style={{ fontWeight: 900, lineHeight: '96px' }}
+                className="text-white text-[96px] max-[1024px]:text-[64px] tracking-[-1.92px] max-[1024px]:tracking-[-1.28px] uppercase"
+                style={{ fontWeight: 900, lineHeight: '1' }}
               >
                 COLOUR STUDIO
               </h1>
@@ -1098,15 +1107,15 @@ export function ColorSlide() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="absolute bottom-[156px] left-0 right-0 text-center text-white text-[18px] tracking-[-0.4395px]"
-            style={{ fontWeight: 500, lineHeight: '28px' }}
+            className="absolute bottom-[156px] max-[1024px]:bottom-[100px] left-0 right-0 text-center text-white text-[18px] max-[1024px]:text-[16px] tracking-[-0.4395px] max-[1024px]:tracking-[-0.4px]"
+            style={{ fontWeight: 500, lineHeight: '1.5' }}
           >
             Tap anywhere to start
           </motion.p>
         </div>
       ) : (
         <>
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
             <AnimatePresence mode="wait">
               {isAnalyzing ? (
                 <motion.div
@@ -1118,8 +1127,8 @@ export function ColorSlide() {
                   className="text-center px-8"
                 >
                   <h1
-                    className="text-white text-[96px] tracking-[-1.92px] uppercase"
-                    style={{ fontWeight: 900, lineHeight: '96px' }}
+                    className="text-white text-[96px] max-[1024px]:text-[64px] tracking-[-1.92px] max-[1024px]:tracking-[-1.28px] uppercase"
+                    style={{ fontWeight: 900, lineHeight: '1' }}
                   >
                     ANALYSING...
                   </h1>
@@ -1133,8 +1142,8 @@ export function ColorSlide() {
                   className="text-center px-8"
                 >
                   <h1
-                    className="text-white text-[96px] tracking-[-1.92px] uppercase mb-6"
-                    style={{ fontWeight: 900, lineHeight: '96px' }}
+                    className="text-white text-[96px] max-[1024px]:text-[64px] tracking-[-1.92px] max-[1024px]:tracking-[-1.28px] uppercase mb-6 max-[1024px]:mb-4"
+                    style={{ fontWeight: 900, lineHeight: '1' }}
                   >
                     YOUR COLOURS
                   </h1>
@@ -1158,17 +1167,17 @@ export function ColorSlide() {
             </AnimatePresence>
           </div>
           
-          <div className="absolute top-8 right-8 flex items-center gap-3 z-10">
+          <div className="absolute top-8 right-8 max-[1024px]:top-4 max-[1024px]:right-4 flex items-center gap-3 max-[1024px]:gap-2 z-10">
             {permissionGranted && (
               <>
-                <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white border border-white/20">
+                <div className="flex items-center gap-2 px-4 py-2 max-[1024px]:px-3 max-[1024px]:py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-white border border-white/20">
                   <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
-                  <span className="text-sm" style={{ fontWeight: 300 }}>Camera Active</span>
+                  <span className="text-sm max-[1024px]:text-xs" style={{ fontWeight: 300 }}>Camera Active</span>
                 </div>
                 {analysisComplete && (
                   <button
                     onClick={tryAgain}
-                    className="px-5 py-2 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm rounded-full border border-white/20 transition-all text-sm"
+                    className="px-5 py-2 max-[1024px]:px-4 max-[1024px]:py-1.5 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm rounded-full border border-white/20 transition-all text-sm max-[1024px]:text-xs"
                     style={{ fontWeight: 300 }}
                   >
                     Try Again
