@@ -58,4 +58,3 @@ jobs:
           git push origin main || exit 0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
