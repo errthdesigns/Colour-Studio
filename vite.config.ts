@@ -16,6 +16,7 @@
   );
 
   export default defineConfig({
+    base: '/Colour-Studio/',
     plugins: [react()],
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
